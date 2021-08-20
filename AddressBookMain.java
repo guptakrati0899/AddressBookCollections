@@ -124,16 +124,43 @@ public class AddressBookMain implements AddressBookInterface {
         }
     }
 
+
+    @Override
+    public void deletePerson() {
+        if (counter > 0) {
+            System.out.println("Enter Persons Mobile Number you want to Delete:");
+            Long Mobilesearch = S.nextLong();
+            int indexOfPerson = 0;
+            boolean isFoundPerson = false;
+            for (int i = 0; i < persons.size(); i++) {
+                if (Mobilesearch == persons.get(i).getMobile()) {
+                    isFoundPerson = true;
+                    indexOfPerson = i;
+                    break;
+                }
+            }
+            if (isFoundPerson) {
+                persons.remove(indexOfPerson);
+                counter--;
+                System.out.println();
+                System.out.println("Delete completed");
+            } else {
+                System.out.println("No person found with this number");
+            }
+        } else {
+            System.out.println("No records to delete");
+        }
+    }
+
+
     @Override
     public void save() {
         System.out.println("------------Save Persons Details-------------");
-
         System.out.println("......Saving details into json file......");
         model.setPersons(persons);
         try {
             JsonMethod.writeMapper(path, model);
         } catch (IOException e) {
-
             e.printStackTrace();
         }
         try {
@@ -159,8 +186,9 @@ public class AddressBookMain implements AddressBookInterface {
             System.out.println("Select an Option!");
             System.out.println("1. Add an Entry");
             System.out.println("2. Edit Details");
-            System.out.println("3. Save Details");
-            System.out.println("4. Exit from the Menu");
+            System.out.println("3. Delete Details");
+            System.out.println("4. Save Details");
+            System.out.println("5. Exit from the Menu");
             System.out.print("> ");
             int choice = S.nextInt();
             switch (choice) {
@@ -175,11 +203,16 @@ public class AddressBookMain implements AddressBookInterface {
                     break;
 
                 case 3:
+                    //Delete Details
+                    main.deletePerson();
+                    break;
+
+                case 4:
                     //Save Person Details
                     main.save();
                     break;
 
-                case 4:
+                case 5:
                     // Exit
                     System.out.println("---------------Exit Address Book-----------------");
                     isExitAddressBook = true;
