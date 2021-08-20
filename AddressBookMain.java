@@ -45,8 +45,8 @@ public class AddressBookMain {
     }
 
     public static void main(String[] args) {
-        AddressBookMain ab = new AddressBookMain();
-        ab.entries();
-        ab.readEntries();
+        AddressBookMain account = new AddressBookMain();
+        account.entries();
+        account.readEntries();
     }
 }
