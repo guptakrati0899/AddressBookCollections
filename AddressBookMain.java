@@ -18,13 +18,14 @@ public class AddressBookMain implements AddressBookInterface {
     static AddressBookModel model = new AddressBookModel();
     static ArrayList<Person> persons = new ArrayList<Person>();
 
+
     @Override
     public void readJson() {
         // checking whether it is empty or not
         File file = new File(path);
         if (file.exists() && file.length() != 0) {
             try {
-                model = (AddressBookModel) JsonMethod.read(path, model);
+                model = (AddressBookModel) JsonMethod.readMapper(path, model);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -69,8 +70,7 @@ public class AddressBookMain implements AddressBookInterface {
             address.setAddressLocal(S.next());
             System.out.println("Enter City: ");
             address.setCity(S.next());
-            System.out.println("Enter State: ");
-            address.setState(S.next());
+            address.setState(statename);
             System.out.println("Enter ZipCode: ");
             address.setZip(S.next());
 
@@ -85,13 +85,53 @@ public class AddressBookMain implements AddressBookInterface {
     }
 
     @Override
+    public void editPerson() {
+        System.out.println(".....Edit Person's Details.....");
+        if (counter > 0) {
+            HashMap<Long, Long> map = new HashMap<>();
+            for (int i = 0; i < persons.size(); i++) {
+                map.put(persons.get(i).getMobile(), persons.get(i).getMobile());
+            }
+            System.out.println("Available Mobile Numbers: " + map.keySet());
+            System.out.println("Enter Persons Mobile Number you want to Edit:");
+            Long mobile = S.nextLong();
+            int indexOfPerson = 0;
+            boolean isFoundPerson = false;
+            for (int j = 0; j < persons.size(); j++) {
+                if (persons.get(j).getMobile().equals(mobile)) {
+                    isFoundPerson = true;
+                    indexOfPerson = j;
+                    break;
+                }
+            }
+            if (isFoundPerson) {
+                System.out.println("Enter New Address");
+                persons.get(indexOfPerson).getAddressObj().setAddressLocal(S.next());
+                System.out.println("Enter New City Name");
+                persons.get(indexOfPerson).getAddressObj().setCity(S.next());
+                System.out.println("Enter New ZipCode");
+                persons.get(indexOfPerson).getAddressObj().setZip(S.next());
+
+                persons.get(indexOfPerson).setMobile(mobile);
+
+                System.out.println();
+                System.out.println("Edit Completed!");
+            } else {
+                System.out.println("No Person Found with this Number");
+            }
+        } else {
+            System.out.println("This is Empty! There is No record to Edit!");
+        }
+    }
+
+    @Override
     public void save() {
         System.out.println("------------Save Persons Details-------------");
 
         System.out.println("......Saving details into json file......");
         model.setPersons(persons);
         try {
-            JsonMethod.write(path, model);
+            JsonMethod.writeMapper(path, model);
         } catch (IOException e) {
 
             e.printStackTrace();
@@ -118,8 +158,9 @@ public class AddressBookMain implements AddressBookInterface {
 
             System.out.println("Select an Option!");
             System.out.println("1. Add an Entry");
-            System.out.println("2. Save Details");
-            System.out.println("3. Exit from the Menu");
+            System.out.println("2. Edit Details");
+            System.out.println("3. Save Details");
+            System.out.println("4. Exit from the Menu");
             System.out.print("> ");
             int choice = S.nextInt();
             switch (choice) {
@@ -129,17 +170,22 @@ public class AddressBookMain implements AddressBookInterface {
                     break;
 
                 case 2:
+                    //Edit Details
+                    main.editPerson();
+                    break;
+
+                case 3:
                     //Save Person Details
                     main.save();
                     break;
 
-                case 3:
+                case 4:
                     // Exit
                     System.out.println("---------------Exit Address Book-----------------");
                     isExitAddressBook = true;
                     System.out.println("Thank you for your Time!");
-
                     break;
+
                 default:
                     System.out.println("Invalid Option! Please Choose Correct Options from the Menu!");
                     break;
